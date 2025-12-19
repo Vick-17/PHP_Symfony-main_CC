@@ -1,0 +1,68 @@
+
+services:
+###> doctrine/doctrine-bundle ###
+  database:
+    ports:
+      - "5432"
+###< doctrine/doctrine-bundle ###
+
+###> symfony/mailer ###
+  mailer:
+    image: axllent/mailpit
+    ports:
+      - "1025"
+      - "8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+###< symfony/mailer ###
+
+###> doctrine/mongodb-odm-bundle ###
+  mongodb:
+    image: mongo:6
+    restart: unless-stopped
+    command: ["mongod", "--bind_ip_all"]
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+###< doctrine/mongodb-odm-bundle ###
+
+  sonarqube:
+    image: sonarqube:10.5-community
+    restart: unless-stopped
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+
+  app:
+    image: php:8.2-cli
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    environment:
+      MONGODB_URL: ${MONGODB_URL:-mongodb://mongodb:27017}
+      MONGODB_DB: ${MONGODB_DB:-hotel}
+    volumes:
+      - ./:/app
+    depends_on:
+      - mongodb
+    command: >
+      bash -lc "apt-get update &&
+      apt-get install -y git unzip libicu-dev libzip-dev pkg-config libssl-dev zlib1g-dev &&
+      (php -m | grep -q '^mongodb$' || pecl install -f mongodb) &&
+      echo 'extension=mongodb.so' > /usr/local/etc/php/conf.d/mongodb.ini &&
+      curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer &&
+      composer install &&
+      php -S 0.0.0.0:8000 -t public"
+
+volumes:
+  mongodb_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:

@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vérification du code{% endblock %}
+
+{% block body %}
+<h1>Vérification du code</h1>
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">{{ message }}</div>
+{% endfor %}
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger">{{ message }}</div>
+{% endfor %}
+<form method="post">
+    <div class="mb-3">
+        <label for="code">Code reçu par email</label>
+        <input type="text" id="code" name="code" class="form-control" required autofocus maxlength="6">
+    </div>
+    <button type="submit" class="btn btn-primary">Vérifier</button>
+</form>
+<a href="{{ path('app_forgot_password') }}">Retour</a>
+{% endblock %}

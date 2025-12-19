@@ -1,0 +1,61 @@
+{# filepath: templates/client/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des clients{% endblock %}
+
+{% block body %}
+<h1 class="mb-4">Liste des clients</h1>
+
+<form method="get" action="{{ path('client_index') }}" class="mb-4">
+    <div class="row">
+        <div class="col-md-4">
+            <input type="text" name="search" class="form-control" placeholder="Rechercher par nom ou email" value="{{ search }}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+        </div>
+    </div>
+</form>
+
+
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th> {# Nouvelle colonne pour l'ID #}
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Téléphone</th>
+            <th>Rôles</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for client in clients %}
+            <tr>
+                <td>{{ client.autoIncrementId }}</td> {# Affichage de l'ID auto-incrémenté #}
+                <td>{{ client.nom }}</td>
+                <td>{{ client.email }}</td>
+                <td>{{ client.telephone }}</td>
+                <td>{{ client.roles|join(', ') }}</td>
+                <td>
+                    <a href="{{ path('client_show', { id: client.id }) }}" class="btn btn-info btn-sm">Voir</a>
+                    <a href="{{ path('client_edit', { id: client.id }) }}" class="btn btn-warning btn-sm">Modifier</a>
+                    <form method="post" action="{{ path('client_delete', { id: client.id }) }}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce client ?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="d-flex gap-2">
+    {% if currentPage > 1 %}
+        <a class="btn btn-outline-primary" href="{{ path('client_index', { page: currentPage - 1, search: search }) }}">Précédent</a>
+    {% endif %}
+    {% if currentPage < totalPages %}
+        <a class="btn btn-outline-primary" href="{{ path('client_index', { page: currentPage + 1, search: search }) }}">Suivant</a>
+    {% endif %}
+</div>
+
+{% endblock %}

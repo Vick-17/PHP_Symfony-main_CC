@@ -1,0 +1,35 @@
+{# filepath: templates/client/edit.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un client{% endblock %}
+
+{% block body %}
+<h1>Modifier un client</h1>
+
+<form method="post" action="{{ path('client_edit', { id: client.id }) }}">
+    <div>
+        <label for="autoIncrementId">ID :</label>
+        <input type="number" id="autoIncrementId" name="autoIncrementId" value="{{ client.autoIncrementId }}" required>
+    </div>
+    <div>
+        <label for="email">Email :</label>
+        <input type="email" id="email" name="email" value="{{ client.email }}" required>
+    </div>
+    <div>
+        <label for="telephone">Téléphone :</label>
+        <input type="text" id="telephone" name="telephone" value="{{ client.telephone }}" required>
+    </div>
+    <div>
+        <label for="roles">Rôles :</label>
+        <select id="roles" name="roles[]" multiple>
+            <option value="ROLE_USER" {% if 'ROLE_USER' in client.roles %}selected{% endif %}>Utilisateur</option>
+            <option value="ROLE_ADMIN" {% if 'ROLE_ADMIN' in client.roles %}selected{% endif %}>Administrateur</option>
+        </select>
+    </div>
+    <div>
+        <button type="submit">Enregistrer</button>
+    </div>
+</form>
+
+<a href="{{ path('client_index') }}">Retour à la liste des clients</a>
+{% endblock %}

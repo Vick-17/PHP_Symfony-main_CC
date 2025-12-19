@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ reservation ? 'Modifier une réservation' : 'Nouvelle réservation' }}{% endblock %}
+
+{% block body %}
+<h1 class="mb-4">{{ reservation ? 'Modifier la réservation' : 'Créer une réservation' }}</h1>
+
+<form method="post" class="row gy-3">
+    <div class="col-md-4">
+        <label for="client_id" class="form-label">Client</label>
+        <select id="client_id" name="client_id" class="form-select" required>
+            <option value="">Choisir un client</option>
+            {% for client in clients %}
+                <option value="{{ client.id }}" {% if reservation and reservation.client and reservation.client.id == client.id %}selected{% endif %}>
+                    {{ client.nom }} - {{ client.email }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-4">
+        <label for="hotel_id" class="form-label">Hôtel</label>
+        <select id="hotel_id" name="hotel_id" class="form-select" required>
+            <option value="">Choisir un hôtel</option>
+            {% for hotel in hotels %}
+                <option value="{{ hotel.id }}" {% if reservation and reservation.hotel and reservation.hotel.id == hotel.id %}selected{% endif %}>
+                    {{ hotel.nom }} ({{ hotel.ville }})
+                </option>
+            {% endfor %}
+        </select>
+        <small class="text-muted">Sélectionnez l’hôtel puis cochez uniquement ses chambres.</small>
+    </div>
+
+    <div class="col-md-2">
+        <label for="date_debut" class="form-label">Date de début</label>
+        <input type="date" id="date_debut" name="date_debut" class="form-control" value="{{ reservation ? reservation.dateDebut|date('Y-m-d') : '' }}" required>
+    </div>
+    <div class="col-md-2">
+        <label for="date_fin" class="form-label">Date de fin</label>
+        <input type="date" id="date_fin" name="date_fin" class="form-control" value="{{ reservation ? reservation.dateFin|date('Y-m-d') : '' }}" required>
+    </div>
+
+    <div class="col-12">
+        <label class="form-label">Chambres</label>
+        <div class="row row-cols-1 row-cols-md-2 g-2">
+            {% set selectedHotelId = reservation and reservation.hotel ? reservation.hotel.id : null %}
+            {% for chambre in chambres %}
+                <div class="col">
+                    <div class="form-check p-3 border rounded">
+                        <input class="form-check-input {% if selectedHotelId and chambre.hotel.id != selectedHotelId %}opacity-50{% endif %}"
+                               type="checkbox"
+                               name="chambre_ids[]"
+                               id="chambre_{{ chambre.id }}"
+                               value="{{ chambre.id }}"
+                               {% if reservation and chambre in reservation.chambres %}checked{% endif %}>
+                        <label class="form-check-label" for="chambre_{{ chambre.id }}">
+                            Chambre {{ chambre.numero }} - {{ chambre.type }} ({{ chambre.hotel.nom }})
+                        </label>
+                        <div class="text-muted small">Prix: {{ chambre.prix }} €, Capacité: {{ chambre.capacite }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-12 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">{{ reservation ? 'Enregistrer' : 'Créer' }}</button>
+        <a href="{{ path('admin_reservations') }}" class="btn btn-secondary">Retour</a>
+    </div>
+</form>
+{% endblock %}

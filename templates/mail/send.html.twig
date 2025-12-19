@@ -1,0 +1,24 @@
+{# filepath: templates/security/forgot_password.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Mot de passe oublié{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2>Mot de passe oublié</h2>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+
+    <form method="post">
+        <div class="mb-3">
+            <label for="email" class="form-label">Adresse email</label>
+            <input type="email" class="form-control" id="email" name="email" required autofocus>
+        </div>
+        <button type="submit" class="btn btn-primary">Envoyer le lien de réinitialisation</button>
+    </form>
+</div>
+{% endblock %}

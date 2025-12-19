@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes réservations{% endblock %}
+
+{% block body %}
+<h1 class="mb-4">Mes réservations</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Numéro</th>
+            <th>Chambres</th>
+            <th>Date de début</th>
+            <th>Date de fin</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reservation in reservations %}
+            <tr>
+                <td>{{ reservation.numeroReservation }}</td>
+                <td>
+                    <ul class="mb-0">
+                        {% for chambre in reservation.chambres %}
+                            <li>Chambre {{ chambre.numero }} ({{ chambre.type }})</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>{{ reservation.dateDebut|date('d/m/Y') }}</td>
+                <td>{{ reservation.dateFin|date('d/m/Y') }}</td>
+<td>
+    <form method="post" action="{{ path('reservation_cancel', { id: reservation.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reservation.id) }}">
+        <button type="submit" class="btn btn-danger btn-sm">Annuler</button>
+    </form>
+    <a href="{{ path('reservation_comment', { id: reservation.id }) }}" class="btn btn-primary btn-sm">Commenter</a>
+</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Aucune réservation trouvée.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

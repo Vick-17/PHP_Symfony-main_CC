@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commenter la réservation{% endblock %}
+
+{% block body %}
+<h1>Commenter la réservation {{ reservation.numeroReservation }}</h1>
+<p class="text-muted">
+    Chambres :
+    {% for chambre in reservation.chambres %}
+        {{ chambre.numero }}{% if not loop.last %}, {% endif %}
+    {% endfor %}
+</p>
+
+<form method="post">
+    <div class="mb-3">
+        <label for="content" class="form-label">Votre commentaire</label>
+        <textarea id="content" name="content" class="form-control" rows="5" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Envoyer</button>
+</form>
+{% endblock %}

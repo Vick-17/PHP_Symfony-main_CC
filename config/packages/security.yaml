@@ -1,0 +1,32 @@
+security:
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    providers:
+        app_user_provider:
+            mongodb:
+                class: App\Document\Client
+                property: email
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            provider: app_user_provider
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                default_target_path: home
+            logout:
+                path: app_logout
+                target: home
+            lazy: true
+
+    access_control:
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/clients, roles: ROLE_ADMIN }
+        - { path: ^/chambre, roles: ROLE_ADMIN }
+        - { path: ^/mes-reservations, roles: ROLE_USER }
+        - { path: ^/reservations, roles: ROLE_USER }
+        - { path: ^/hotel/accueil, roles: 'PUBLIC_ACCESS' }

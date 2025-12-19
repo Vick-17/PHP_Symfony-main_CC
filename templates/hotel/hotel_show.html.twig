@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l'hôtel{% endblock %}
+
+{% block body %}
+<h1 class="mb-4">Détails de l'hôtel {{ hotel.nom }}</h1>
+
+<p><strong>Adresse :</strong> {{ hotel.adresse }}</p>
+<p><strong>Ville :</strong> {{ hotel.ville }}</p>
+<p><strong>Téléphone :</strong> {{ hotel.telephone }}</p>
+<td>
+    {% for i in 1..5 %}
+        {% if i <= hotel.categorie %}
+            <i class="fas fa-star text-warning"></i> {# Étoile pleine #}
+        {% else %}
+            <i class="far fa-star text-warning"></i> {# Étoile vide #}
+        {% endif %}
+    {% endfor %}
+</td>
+
+
+<h2 class="mt-4">Chambres</h2>
+
+{% if app.user and not ('ROLE_ADMIN' in app.user.roles) %}
+<form method="post" action="{{ path('hotel_reserve', { id: hotel.id }) }}">
+    <div class="row g-3 mb-3">
+        <div class="col-md-3">
+            <label for="date_debut" class="form-label">Date de début</label>
+            <input type="date" id="date_debut" name="date_debut" class="form-control" required>
+        </div>
+        <div class="col-md-3">
+            <label for="date_fin" class="form-label">Date de fin</label>
+            <input type="date" id="date_fin" name="date_fin" class="form-control" required>
+        </div>
+    </div>
+{% endif %}
+
+<table class="table">
+    <thead>
+        <tr>
+            {% if app.user and not ('ROLE_ADMIN' in app.user.roles) %}<th>Sélection</th>{% endif %}
+            <th>Numéro</th>
+            <th>Type</th>
+            <th>Prix</th>
+            <th>Capacité</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for chambre in hotel.chambres %}
+            <tr>
+                {% if app.user and not ('ROLE_ADMIN' in app.user.roles) %}
+                    <td><input type="checkbox" name="chambre_ids[]" value="{{ chambre.id }}"></td>
+                {% endif %}
+                <td>{{ chambre.numero }}</td>
+                <td>{{ chambre.type }}</td>
+                <td>{{ chambre.prix }} €</td>
+                <td>{{ chambre.capacite }} lit(s)</td>
+                <td>{% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                        <a href="{{ path('chambre_edit', { id: chambre.id }) }}" class="btn btn-warning btn-sm">Modifier</a>
+                        <form method="post" action="{{ path('chambre_delete', { id: chambre.id }) }}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette chambre ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ chambre.id) }}">
+                        <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                        </form>
+                    {% else %}
+                        <span class="badge bg-success">Disponible</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">Aucune chambre disponible.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if app.user and not ('ROLE_ADMIN' in app.user.roles) %}
+    <button type="submit" class="btn btn-primary">Réserver les chambres sélectionnées</button>
+</form>
+{% endif %}
+
+{% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+    <h2 class="mt-4">Ajouter une chambre</h2>
+    <form method="post" action="{{ path('hotel_show', { id: hotel.id }) }}">
+        <div class="mb-3">
+            <label for="numero" class="form-label">Numéro de la chambre</label>
+            <input type="text" id="numero" name="numero" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="type" class="form-label">Type de chambre</label>
+            <select id="type" name="type" class="form-control" required>
+                <option value="Single">Single</option>
+                <option value="Double">Double</option>
+                <option value="Suite">Suite</option>
+            </select>
+        </div>
+        
+        <div class="mb-3">
+    <label for="capacite" class="form-label">Capacité (nombre de lits)</label>
+    <input type="number" id="capacite" name="capacite" class="form-control" required>
+</div>
+        <div class="mb-3">
+            <label for="prix" class="form-label">Prix par nuit</label>
+            <input type="number" id="prix" name="prix" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success">Ajouter</button>
+    </form>
+{% endif %}
+
+<a href="{{ path('home') }}" class="btn btn-secondary mt-4">Retour à l'accueil</a>
+{% endblock %}

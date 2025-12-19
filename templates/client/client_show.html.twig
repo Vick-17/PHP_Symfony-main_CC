@@ -1,0 +1,62 @@
+{# filepath: templates/client/show.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du client{% endblock %}
+
+{% block body %}
+<h1>Détails du client</h1>
+
+<table>
+    <tr>
+        <th>Nom :</th>
+        <td>{{ client.nom }}</td>
+    </tr>
+    <tr>
+        <th>Email :</th>
+        <td>{{ client.email }}</td>
+    </tr>
+    <tr>
+        <th>Téléphone :</th>
+        <td>{{ client.telephone }}</td>
+    </tr>
+    <tr>
+        <th>Rôles :</th>
+        <td>{{ client.roles|join(', ') }}</td>
+    </tr>
+</table>
+
+<h2>Réservations</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Chambres</th>
+            <th>Date de début</th>
+            <th>Date de fin</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reservation in reservations %}
+            <tr>
+                <td>
+                    <ul class="mb-0">
+                        {% for chambre in reservation.chambres %}
+                            <li>{{ chambre.numero }} ({{ chambre.type }})</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>{{ reservation.dateDebut|date('d/m/Y') }}</td>
+                <td>{{ reservation.dateFin|date('d/m/Y') }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Aucune réservation trouvée.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+
+<a href="{{ path('client_index') }}">Retour à la liste des clients</a>
+<a href="{{ path('client_edit', { id: client.id }) }}">Modifier</a>
+<form method="post" action="{{ path('client_delete', { id: client.id }) }}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce client ?');">
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+</form>
+{% endblock %}

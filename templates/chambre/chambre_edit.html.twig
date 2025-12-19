@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier une chambre{% endblock %}
+
+{% block body %}
+<h1 class="mb-4">Modifier la chambre {{ chambre.numero }}</h1>
+
+<form method="post" action="{{ path('chambre_edit', { id: chambre.id }) }}">
+    <div class="mb-3">
+        <label for="numero" class="form-label">Numéro de la chambre</label>
+        <input type="text" id="numero" name="numero" class="form-control" value="{{ chambre.numero }}" required>
+    </div>
+        <div class="mb-3">
+        <label for="etage" class="form-label">Étage</label>
+        <input type="number" id="etage" name="etage" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="type" class="form-label">Type de chambre</label>
+        <select id="type" name="type" class="form-control" required>
+            <option value="Single" {% if chambre.type == 'Single' %}selected{% endif %}>Single</option>
+            <option value="Double" {% if chambre.type == 'Double' %}selected{% endif %}>Double</option>
+            <option value="Suite" {% if chambre.type == 'Suite' %}selected{% endif %}>Suite</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="prix" class="form-label">Prix par nuit</label>
+        <input type="number" id="prix" name="prix" class="form-control" value="{{ chambre.prix }}" required>
+    </div>
+    <div class="mb-3">
+    <label for="capacite" class="form-label">Capacité</label>
+    <input type="number" id="capacite" name="capacite" class="form-control" value="{{ chambre.capacite }}" required>
+</div>
+    <button type="submit" class="btn btn-success">Enregistrer</button>
+    <a href="{{ path('hotel_show', { id: chambre.hotel.id }) }}" class="btn btn-secondary">Annuler</a>
+</form>
+{% endblock %}

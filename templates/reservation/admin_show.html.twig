@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail de réservation{% endblock %}
+
+{% block body %}
+<h1 class="mb-4">Réservation {{ reservation.numeroReservation }}</h1>
+
+<dl class="row">
+    <dt class="col-sm-3">Client</dt>
+    <dd class="col-sm-9">{{ reservation.client ? reservation.client.nom ~ ' (' ~ reservation.client.email ~ ')' : 'Client supprimé' }}</dd>
+
+    <dt class="col-sm-3">Hôtel</dt>
+    <dd class="col-sm-9">{{ reservation.hotel ? reservation.hotel.nom ~ ' - ' ~ reservation.hotel.ville : 'N/A' }}</dd>
+
+    <dt class="col-sm-3">Période</dt>
+    <dd class="col-sm-9">{{ reservation.dateDebut|date('d/m/Y') }} → {{ reservation.dateFin|date('d/m/Y') }}</dd>
+
+    <dt class="col-sm-3">Chambres</dt>
+    <dd class="col-sm-9">
+        <ul class="mb-0">
+            {% for chambre in reservation.chambres %}
+                <li>{{ chambre.numero }} ({{ chambre.type }}) - {{ chambre.hotel ? chambre.hotel.nom : '' }}</li>
+            {% else %}
+                <li>Aucune chambre</li>
+            {% endfor %}
+        </ul>
+    </dd>
+</dl>
+
+<div class="d-flex gap-2">
+    <a href="{{ path('admin_reservation_edit', { id: reservation.id }) }}" class="btn btn-warning">Modifier</a>
+    <a href="{{ path('admin_reservations') }}" class="btn btn-secondary">Retour à la liste</a>
+</div>
+{% endblock %}

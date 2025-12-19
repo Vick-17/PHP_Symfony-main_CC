@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Chambres et commentaires{% endblock %}
+
+{% block body %}
+<h1 class="mb-4">Chambres et commentaires</h1>
+
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <input type="text" name="search" class="form-control" placeholder="Recherche numéro ou type" value="{{ search }}">
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Filtrer</button>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Hôtel</th>
+            <th>Chambre</th>
+            <th>Commentaires</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for chambre in chambres %}
+            <tr>
+                <td>{{ chambre.hotel.nom }}</td>
+                <td>{{ chambre.numero }} ({{ chambre.type }})</td>
+                <td>
+                    {% set chambreComments = comments[chambre.id] ?? [] %}
+                    {% if chambreComments is not empty %}
+                        <ul class="mb-0">
+                            {% for comment in chambreComments %}
+                                <li>
+                                    {{ comment.author ? comment.author.nom : 'Inconnu' }} ({{ comment.createdAt|date('d/m/Y') }}) :
+                                    {{ comment.content }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <em>Aucun commentaire</em>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="d-flex gap-2">
+    {% if currentPage > 1 %}
+        <a class="btn btn-outline-primary" href="{{ path('admin_chambres', { page: currentPage - 1, search: search }) }}">Précédent</a>
+    {% endif %}
+    {% if currentPage < totalPages %}
+        <a class="btn btn-outline-primary" href="{{ path('admin_chambres', { page: currentPage + 1, search: search }) }}">Suivant</a>
+    {% endif %}
+</div>
+{% endblock %}

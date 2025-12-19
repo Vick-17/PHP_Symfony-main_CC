@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+<h1 class="mb-4">Inscription</h1>
+
+<form method="post" action="{{ path('app_register') }}">
+    <div class="mb-3">
+        <label for="nom" class="form-label">Nom</label>
+        <input type="text" id="nom" name="nom" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" id="email" name="email" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="telephone" class="form-label">Téléphone</label>
+        <input type="text" id="telephone" name="telephone" class="form-control" required>
+    </div>
+    <div class="mb-3 position-relative">
+        <label for="password" class="form-label">Mot de passe</label>
+        <input type="password" id="password" name="password" class="form-control" required>
+        <span class="toggle-password" style="position:absolute;top:38px;right:15px;cursor:pointer;" data-target="password">
+            <i class="fa fa-eye" id="togglePasswordIcon"></i>
+        </span>
+    </div>
+
+    <div class="mb-3 position-relative">
+        <label for="confirm_password" class="form-label">Confirmer le mot de passe</label>
+        <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+        <span class="toggle-password" style="position:absolute;top:38px;right:15px;cursor:pointer;" data-target="confirm_password">
+            <i class="fa fa-eye" id="toggleConfirmPasswordIcon"></i>
+        </span>
+    </div>
+    <button type="submit" class="btn btn-success">S'inscrire</button>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion du toggle pour le mot de passe
+    const passwordInput = document.getElementById('password');
+    const passwordToggle = document.querySelector('.toggle-password[data-target="password"]');
+    const passwordIcon = document.getElementById('togglePasswordIcon');
+    
+    if (passwordToggle && passwordInput) {
+        passwordToggle.addEventListener('click', function() {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            passwordIcon.className = isPassword ? 'fa fa-eye' : 'fa fa-eye-slash';
+        });
+        // Initial state: œil barré quand caché
+        passwordIcon.className = 'fa fa-eye-slash';
+    }
+
+    // Gestion du toggle pour la confirmation du mot de passe
+    const confirmPasswordInput = document.getElementById('confirm_password');
+    const confirmPasswordToggle = document.querySelector('.toggle-password[data-target="confirm_password"]');
+    const confirmPasswordIcon = document.getElementById('toggleConfirmPasswordIcon');
+
+    if (confirmPasswordToggle && confirmPasswordInput) {
+        confirmPasswordToggle.addEventListener('click', function() {
+            const isPassword = confirmPasswordInput.type === 'password';
+            confirmPasswordInput.type = isPassword ? 'text' : 'password';
+            confirmPasswordIcon.className = isPassword ? 'fa fa-eye' : 'fa fa-eye-slash';
+        });
+        // Initial state: œil barré quand caché
+        confirmPasswordIcon.className = 'fa fa-eye-slash';
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+
+<h1 class="mb-4">Bienvenue sur notre plateforme de réservation d'hôtels</h1>
+
+{% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+    <div class="mb-4">
+        <a href="{{ path('hotel_new') }}" class="btn btn-success">Ajouter un hôtel</a>
+    </div>
+{% endif %}
+<form method="get" action="{{ path('hotel_search') }}" class="row g-2 align-items-end mb-4">
+    <div class="col-md-4">
+        <label class="form-label" for="hotel-query">Nom ou ville</label>
+        <input list="hotel-noms" id="hotel-query" name="q" class="form-control" placeholder="Nom ou ville" value="{{ query }}">
+        <datalist id="hotel-noms">
+            {% for nom in noms %}
+                <option value="{{ nom }}">
+            {% endfor %}
+        </datalist>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label" for="date-debut">Date de début</label>
+        <input type="date" id="date-debut" name="date_debut" class="form-control" value="{{ dateDebut }}">
+    </div>
+    <div class="col-md-3">
+        <label class="form-label" for="date-fin">Date de fin</label>
+        <input type="date" id="date-fin" name="date_fin" class="form-control" value="{{ dateFin }}">
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Rechercher</button>
+    </div>
+</form>
+<div class="row">
+    {% for hotel in hotels %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ hotel.nom }}</h5>
+                    <p class="card-text">
+                        <strong>Adresse :</strong> {{ hotel.adresse }}<br>
+                        <strong>Ville :</strong> {{ hotel.ville }}<br>
+                        <td>
+    {% for i in 1..5 %}
+        {% if i <= hotel.categorie %}
+            <i class="fas fa-star text-warning"></i> {# Étoile pleine #}
+        {% else %}
+            <i class="far fa-star text-warning"></i> {# Étoile vide #}
+        {% endif %}
+    {% endfor %}
+</td>
+                    </p>
+                    <a href="{{ path('hotel_show', { id: hotel.id }) }}" class="btn btn-primary">Voir les détails</a>
+                    {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                        <a href="{{ path('hotel_edit', { id: hotel.id }) }}" class="btn btn-warning">Modifier</a>
+                        <form method="post" action="{{ path('hotel_delete', { id: hotel.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet hôtel ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ hotel.id) }}">
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+</form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p>Aucun hôtel trouvé pour votre recherche.</p>
+    {% endfor %}
+</div>
+<div class="pagination">
+    {% if currentPage > 1 %}
+        <a href="{{ path('home', { page: currentPage - 1 }) }}" class="btn btn-primary">Précédent</a>
+    {% endif %}
+
+    {% for i in 1..totalPages %}
+        <a href="{{ path('home', { page: i }) }}" class="btn {{ i == currentPage ? 'btn-secondary' : 'btn-light' }}">
+            {{ i }}
+        </a>
+    {% endfor %}
+
+    {% if currentPage < totalPages %}
+        <a href="{{ path('home', { page: currentPage + 1 }) }}" class="btn btn-primary">Suivant</a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+<h1 class="mb-4">Connexion</h1>
+
+<form method="post">
+    {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
+    <div class="mb-3">
+        <label for="username" class="form-label">Email</label>
+        <input type="text" id="username" name="_username" class="form-control" value="{{ last_username }}" required autofocus>
+    </div>
+
+<div class="mb-3 position-relative">
+    <label for="password" class="form-label">Mot de passe</label>
+    <input type="password" id="password" name="_password" class="form-control" required>
+    <span class="toggle-password" style="position:absolute;top:38px;right:15px;cursor:pointer;">
+        <i class="fa fa-eye" id="togglePasswordIcon"></i>
+    </span>
+</div>
+
+    <button type="submit" class="btn btn-primary">Se connecter</button>
+</form>
+<div class="mt-3 text-center">
+    <a class="btn btn-link" href="{{ path('app_forgot_password') }}">Mot de passe oublié&nbsp;?</a>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    const toggle = document.querySelector('.toggle-password');
+    const icon = document.getElementById('togglePasswordIcon');
+    if (toggle && passwordInput) {
+        toggle.addEventListener('click', function() {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            icon.className = isPassword ? 'fa fa-eye' : 'fa fa-eye-slash';
+        });
+        // Initial state: œil barré quand caché
+        icon.className = 'fa fa-eye-slash';
+    }
+});
+</script>
+{% endblock %}
