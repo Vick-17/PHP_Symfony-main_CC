@@ -29,6 +29,7 @@ class ReservationController extends AbstractController
 
     /**
      * Affiche les réservations de l'utilisateur connecté.
+     * Renvoie vers la page de connexion si personne n'est authentifié.
      */
     #[Route('/mes-reservations', name: 'user_reservations', methods: ['GET'])]
     public function userReservations(DocumentManager $dm): Response
@@ -49,6 +50,7 @@ class ReservationController extends AbstractController
 
     /**
      * Affiche toutes les réservations pour l'administration avec vérification des clients.
+     * Ajoute une pagination simple et une recherche par numéro.
      */
     #[Route('/admin/reservations', name: 'admin_reservations', methods: ['GET'])]
     public function adminReservations(Request $request, DocumentManager $dm): Response
@@ -90,6 +92,7 @@ class ReservationController extends AbstractController
 
     /**
      * Détail d'une réservation (administration).
+     * Lève une 404 si l'identifiant n'existe pas.
      */
     #[Route('/admin/reservations/{id}', name: 'admin_reservation_show', methods: ['GET'])]
     public function adminReservationShow(string $id, DocumentManager $dm): Response
@@ -110,6 +113,7 @@ class ReservationController extends AbstractController
 
     /**
      * Création d'une réservation côté administrateur.
+     * Vérifie la cohérence des dates, le rattachement des chambres à l'hôtel choisi et la disponibilité.
      */
     #[Route('/admin/reservations/new', name: 'admin_reservation_new', methods: ['GET', 'POST'])]
     public function adminReservationNew(Request $request, DocumentManager $dm): Response
@@ -185,6 +189,7 @@ class ReservationController extends AbstractController
 
     /**
      * Edition d'une réservation côté administrateur.
+     * Reprend les validations de création (dates, hôtel, chambres) et remplace la liste de chambres.
      */
     #[Route('/admin/reservations/{id}/edit', name: 'admin_reservation_edit', methods: ['GET', 'POST'])]
     public function adminReservationEdit(string $id, Request $request, DocumentManager $dm): Response
@@ -260,6 +265,7 @@ class ReservationController extends AbstractController
 
     /**
      * Affiche toutes les chambres et leurs commentaires pour l'administration.
+     * Combine pagination, recherche texte et remontée des avis associés.
      */
     #[Route('/admin/chambres', name: 'admin_chambres', methods: ['GET'])]
     public function adminChambres(Request $request, DocumentManager $dm): Response
@@ -310,6 +316,7 @@ class ReservationController extends AbstractController
 
     /**
      * Permet à un utilisateur de commenter une réservation.
+     * Vérifie que le réservataire est bien l'auteur du commentaire.
      */
     #[Route('/reservation/{id}/comment', name: 'reservation_comment', methods: ['GET', 'POST'])]
     public function comment(string $id, Request $request, DocumentManager $dm): Response
@@ -362,6 +369,7 @@ class ReservationController extends AbstractController
 
     /**
      * Supprime une réservation (administration).
+     * Affiche un message clair si la réservation est introuvable.
      */
     #[Route('/reservations/{id}/delete', name: 'reservation_delete', methods: ['POST'])]
     public function delete(string $id, DocumentManager $dm): Response
@@ -385,6 +393,7 @@ class ReservationController extends AbstractController
 
     /**
      * Permet à un utilisateur d'annuler sa propre réservation avec vérification CSRF.
+     * Compare l'utilisateur courant avec le client de la réservation avant suppression.
      */
     #[Route('/reservations/{id}/cancel', name: 'reservation_cancel', methods: ['POST'])]
     public function cancelReservation(string $id, Request $request, DocumentManager $dm): Response
@@ -435,5 +444,4 @@ class ReservationController extends AbstractController
         return $count === 0;
     }
 }
-
 

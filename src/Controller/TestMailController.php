@@ -8,8 +8,15 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Contrôleur de test pour vérifier que l'envoi d'e-mails fonctionne en local.
+ * Sert à valider la configuration Mailpit sans passer par un formulaire.
+ */
 class TestMailController extends AbstractController
 {
+    /**
+     * Envoie un e-mail simple vers une adresse de démo et affiche un message de confirmation.
+     */
     #[Route('/test-email', name: 'test_email')]
     public function sendTestEmail(MailerInterface $mailer): Response
     {

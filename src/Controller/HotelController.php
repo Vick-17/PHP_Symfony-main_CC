@@ -10,12 +10,21 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Document\Reservation;
 
+/**
+ * Contrôleur vitrine pour les hôtels.
+ * Regroupe l'accueil, la recherche, la réservation et la gestion admin des hôtels.
+ */
 #[Route('/hotel')]
 class HotelController extends AbstractController
 
 
 
-{
+
+    {
+    /**
+     * Page d'accueil publique avec pagination basique sur les hôtels.
+     * Calcule aussi le nombre de pages pour le template.
+     */
     #[Route('/accueil', name: 'home', methods: ['GET'])]
     public function home(Request $request, DocumentManager $dm): Response
     {
@@ -46,6 +55,10 @@ class HotelController extends AbstractController
         ]);
     }
 
+    /**
+     * Enregistre une réservation pour un hôtel donné.
+     * Vérifie l'authentification, la cohérence des dates et la dispo de chaque chambre.
+     */
     #[Route('/hotel/{id}/reserve', name: 'hotel_reserve', methods: ['POST'])]
     public function reserveRoom(string $id, Request $request, DocumentManager $dm): Response
     {
@@ -106,6 +119,10 @@ class HotelController extends AbstractController
         return $this->redirectToRoute('hotel_show', ['id' => $hotel->getId()]);
     }
 
+    /**
+     * Recherche d'hôtels par nom/ville et filtrage sur une plage de dates.
+     * Si des dates sont fournies, on garde seulement les hôtels avec au moins une chambre libre.
+     */
     #[Route('/search', name: 'hotel_search', methods: ['GET'])]
     public function search(Request $request, DocumentManager $dm): Response
     {
@@ -154,6 +171,9 @@ class HotelController extends AbstractController
         ]);
     }
 
+    /**
+     * Petit formulaire de démo listant les noms d'hôtels (utilisé côté front).
+     */
     #[Route('/formulaire', name: 'hotel_form', methods: ['GET'])]
     public function form(DocumentManager $dm): Response
     {
@@ -164,6 +184,10 @@ class HotelController extends AbstractController
             'noms' => $noms,
         ]);
     }
+    /**
+     * Création d'un hôtel par un administrateur.
+     * Valide la catégorie et enregistre le document.
+     */
     #[Route('/new', name: 'hotel_new', methods: ['GET', 'POST'])]
     public function new(Request $request, DocumentManager $dm): Response
     {
@@ -194,6 +218,10 @@ class HotelController extends AbstractController
         return $this->render('hotel/hotel_new.html.twig');
     }
 
+    /**
+     * Affiche le détail d'un hôtel.
+     * Permet aussi d'ajouter une chambre quand on est admin.
+     */
     #[Route('/{id}', name: 'hotel_show', methods: ['GET', 'POST'])]
     public function show(string $id, Request $request, DocumentManager $dm): Response
     {
@@ -222,6 +250,10 @@ class HotelController extends AbstractController
         ]);
     }
 
+    /**
+     * Edition d'un hôtel (admin uniquement).
+     * Revalide la catégorie avant sauvegarde.
+     */
     #[Route('/{id}/edit', name: 'hotel_edit', methods: ['GET', 'POST'])]
     public function edit(string $id, Request $request, DocumentManager $dm): Response
     {
@@ -255,6 +287,10 @@ class HotelController extends AbstractController
             'hotel' => $hotel,
         ]);
     }
+    /**
+     * Suppression d'un hôtel (admin).
+     * Enlève le document puis revient à l'accueil.
+     */
     #[Route('/{id}/delete', name: 'hotel_delete', methods: ['POST'])]
 
 public function delete(string $id, DocumentManager $dm): Response
@@ -274,6 +310,9 @@ if ($hotel) {
         return $this->redirectToRoute('home');
     }
 
+    /**
+     * Vérifie s'il existe déjà une réservation qui chevauche la période demandée.
+     */
     private function isChambreDisponible(Chambre $chambre, DocumentManager $dm, \DateTime $dateDebut, \DateTime $dateFin): bool
     {
         $qb = $dm->createQueryBuilder(Reservation::class);

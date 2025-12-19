@@ -21,6 +21,7 @@ class ChambreController extends AbstractController
     /**
      * Ajoute une nouvelle chambre à un hôtel donné.
      * Vérifie l'existence de l'hôtel et l'unicité du numéro de chambre pour cet hôtel.
+     * Enregistre ensuite la chambre et redirige vers la fiche de l'hôtel.
      *
      * @param string $hotelId L'identifiant de l'hôtel
      * @param Request $request La requête HTTP
@@ -95,6 +96,7 @@ class ChambreController extends AbstractController
     /**
      * Modifie une chambre existante.
      * Vérifie l'unicité du numéro de chambre pour l'hôtel lors de la modification.
+     * Met à jour le type, le prix et la capacité avant de sauvegarder.
      *
      * @param string $id L'identifiant de la chambre à modifier
      * @param Request $request La requête HTTP
@@ -155,6 +157,7 @@ class ChambreController extends AbstractController
 
     /**
      * Affiche les commentaires d'une chambre.
+     * Charge d'abord les réservations qui utilisent la chambre, puis les avis liés.
      *
      * @param string $id L'identifiant de la chambre
      * @param DocumentManager $dm Le gestionnaire de documents MongoDB
@@ -195,6 +198,7 @@ class ChambreController extends AbstractController
 
     /**
      * Supprime une chambre.
+     * Après suppression, redirige vers la fiche de l'hôtel parent.
      *
      * @param string $id L'identifiant de la chambre à supprimer
      * @param DocumentManager $dm Le gestionnaire de documents MongoDB

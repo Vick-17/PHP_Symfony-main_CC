@@ -46,6 +46,7 @@ class UserController extends AbstractController
 
     /**
      * Affiche la liste des utilisateurs (clients) pour l'administration.
+     * Protégé par ROLE_ADMIN pour éviter qu'un simple utilisateur consulte tout le monde.
      */
     #[Route('/users', name: 'user_management', methods: ['GET'])]
     public function manageUsers(DocumentManager $dm): Response
@@ -73,6 +74,7 @@ class UserController extends AbstractController
 
     /**
      * Gère l'inscription d'un nouvel utilisateur (client).
+     * Valide les mots de passe, l'unicité email/téléphone puis crée le compte avec un ID auto-incrémenté.
      */
     #[Route('/register', name: 'app_register', methods: ['GET', 'POST'])]
     public function register(Request $request, UserPasswordHasherInterface $passwordHasher, DocumentManager $dm): Response
@@ -138,6 +140,7 @@ class UserController extends AbstractController
     /**
      * Gère la demande de réinitialisation de mot de passe.
      * Envoie un code de réinitialisation par email.
+     * Le code et la date de demande sont stockés pour valider l'étape suivante.
      */
     #[Route('/forgot-password', name: 'app_forgot_password', methods: ['GET', 'POST'])]
     public function forgotPassword(Request $request, DocumentManager $dm, MessageBusInterface $bus): Response
@@ -173,6 +176,7 @@ class UserController extends AbstractController
 
     /**
      * Vérifie le code de réinitialisation envoyé par email.
+     * Bloque si le code est invalide ou expiré, sinon conserve l'email en session pour la suite.
      */
     #[Route('/check-code', name: 'app_check_code', methods: ['GET', 'POST'])]
     public function checkCode(Request $request, DocumentManager $dm): Response
@@ -210,6 +214,7 @@ class UserController extends AbstractController
 
     /**
      * Permet à l'utilisateur de saisir un nouveau mot de passe après validation du code.
+     * Efface le code en base une fois le mot de passe mis à jour.
      */
     #[Route('/reset-password-code', name: 'app_reset_password_code', methods: ['GET', 'POST'])]
     public function resetPasswordCode(

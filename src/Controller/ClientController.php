@@ -18,6 +18,7 @@ class ClientController extends AbstractController
 {
     /**
      * Affiche la liste des clients, avec possibilité de recherche.
+     * La requête filtre par nom/email et applique une pagination simple.
      *
      * @param Request $request La requête HTTP
      * @param DocumentManager $dm Le gestionnaire de documents MongoDB
@@ -65,6 +66,7 @@ class ClientController extends AbstractController
 
     /**
      * Affiche le détail d'un client et ses réservations.
+     * Vérifie l'accès admin et lève une 404 si le client n'existe pas.
      *
      * @param string $id L'identifiant du client
      * @param DocumentManager $dm Le gestionnaire de documents MongoDB
@@ -102,6 +104,7 @@ class ClientController extends AbstractController
     /**
      * Modifie un client existant.
      * Vérifie l'unicité de l'ID auto-incrémenté.
+     * Traite aussi la mise à jour email/téléphone/roles envoyés depuis le formulaire.
      *
      * @param Request $request La requête HTTP
      * @param Client $client Le client à modifier (injecté automatiquement)
@@ -156,6 +159,7 @@ class ClientController extends AbstractController
 
     /**
      * Supprime un client et ses réservations associées.
+     * Parcourt d'abord les réservations liées pour éviter les données orphelines.
      *
      * @param string $id L'identifiant du client à supprimer
      * @param DocumentManager $dm Le gestionnaire de documents MongoDB
